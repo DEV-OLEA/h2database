@@ -21,6 +21,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+
 import org.h2.constant.ErrorCode;
 import org.h2.engine.Constants;
 import org.h2.engine.SessionInterface;
@@ -574,14 +575,6 @@ public class Transfer {
                     long precision = readLong();
                     return ValueLobDb.create(Value.BLOB, session.getDataHandler().getLobStorage(), tableId, id, precision);
                 }
-                int len = (int) length;
-                byte[] small = new byte[len];
-                IOUtils.readFully(in, small, 0, len);
-                int magic = readInt();
-                if (magic != LOB_MAGIC) {
-                    throw DbException.get(ErrorCode.CONNECTION_BROKEN_1, "magic=" + magic);
-                }
-                return ValueLobDb.createSmallLob(Value.BLOB, small, length);
             }
             Value v = session.getDataHandler().getLobStorage().createBlob(in, length);
             int magic = readInt();
